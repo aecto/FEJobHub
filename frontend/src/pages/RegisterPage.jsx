@@ -11,6 +11,7 @@ const RegisterPage = () => {
     confirmPassword: ''
   })
   const [error, setError] = useState('')
+  const [success, setSuccess] = useState(false) // 添加成功状态
   const [loading, setLoading] = useState(false)
   
   const navigate = useNavigate()
@@ -25,6 +26,12 @@ const RegisterPage = () => {
   const handleSubmit = async (e) => {
     e.preventDefault()
     
+    // 验证密码长度
+    if (formData.password.length < 6) {
+      setError('密码长度至少为6位')
+      return
+    }
+    
     // 验证密码确认
     if (formData.password !== formData.confirmPassword) {
       setError('两次输入的密码不一致')
@@ -33,6 +40,7 @@ const RegisterPage = () => {
     
     setLoading(true)
     setError('')
+    setSuccess(false) // 重置成功状态
     
     try {
       const response = await authAPI.register({
@@ -41,14 +49,20 @@ const RegisterPage = () => {
         password: formData.password
       })
       
+      // 设置成功状态
+      setSuccess(true)
+      
       // 保存token和用户信息到localStorage
       localStorage.setItem('token', response.data.token)
       localStorage.setItem('user', JSON.stringify(response.data.user))
       
-      // 跳转到主页
-      navigate('/')
+      // 延迟跳转到职位页面，让用户看到成功提示
+      setTimeout(() => {
+        navigate('/jobs')
+      }, 1500)
     } catch (err) {
       setError(err.response?.data?.error || '注册失败')
+      setSuccess(false) // 确保成功状态被重置
     } finally {
       setLoading(false)
     }
@@ -59,6 +73,7 @@ const RegisterPage = () => {
       <div className="auth-container">
         <h2>用户注册</h2>
         {error && <div className="error-message">{error}</div>}
+        {success && <div className="success-message">注册成功！正在跳转到职位页面...</div>} {/* 添加成功提示 */}
         <form onSubmit={handleSubmit}>
           <div className="form-group">
             <label htmlFor="username">用户名:</label>

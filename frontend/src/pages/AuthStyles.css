@@ -49,22 +49,28 @@
 button {
   width: 100%;
   padding: 0.75rem;
-  background-color: #007bff;
+  background-color: #0056b3; /* 更深的蓝色，更加清晰 */
   color: white;
   border: none;
   border-radius: 4px;
   font-size: 1rem;
   cursor: pointer;
   margin-top: 1rem;
+  font-weight: bold; /* 加粗文字 */
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); /* 添加阴影效果 */
 }
 
 button:hover:not(:disabled) {
-  background-color: #0056b3;
+  background-color: #003d82; /* 悬停时更深的颜色 */
+  transform: translateY(-1px); /* 悬停时轻微上移效果 */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3); /* 悬停时增强阴影 */
 }
 
 button:disabled {
   background-color: #6c757d;
   cursor: not-allowed;
+  transform: none; /* 禁用时无变换 */
+  box-shadow: none; /* 禁用时无阴影 */
 }
 
 .error-message {
@@ -73,6 +79,15 @@ button:disabled {
   padding: 0.75rem;
   border-radius: 4px;
   margin-bottom: 1rem;
+}
+
+.success-message {
+  background-color: #d4edda;
+  color: #155724;
+  padding: 0.75rem;
+  border-radius: 4px;
+  margin-bottom: 1rem;
+  border: 1px solid #c3e6cb;
 }
 
 .auth-links {
