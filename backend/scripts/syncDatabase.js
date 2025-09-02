@@ -1,6 +1,7 @@
 const sequelize = require('../config/database');
 const Job = require('../models/Job');
 const User = require('../models/User');
+const Visit = require('../models/Visit');
 const ExcelParser = require('../services/excelParser');
 const path = require('path');
 const fs = require('fs');

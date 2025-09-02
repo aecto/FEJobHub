@@ -24,6 +24,10 @@ app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
+// 访问记录中间件
+const recordVisit = require('./middleware/visitMiddleware');
+app.use(recordVisit);
+
 // 静态文件服务
 app.use('/uploads', express.static(uploadDir));
 

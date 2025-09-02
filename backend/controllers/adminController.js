@@ -1,5 +1,7 @@
 const User = require('../models/User');
 const Job = require('../models/Job');
+const Visit = require('../models/Visit');
+const { Op } = require('sequelize');
 
 class AdminController {
   /**
@@ -101,6 +103,70 @@ class AdminController {
       const totalUsers = await User.count();
       const totalJobs = await Job.count();
       
+      // 获取总访问量
+      const totalVisits = await Visit.count();
+      
+      // 获取当前在线人数（最近5分钟内有活动的用户）
+      const onlineUsers = await Visit.count({
+        where: {
+          visited_at: {
+            [Op.gte]: new Date(Date.now() - 5 * 60 * 1000) // 5分钟内
+          }
+        },
+        distinct: true,
+        col: 'ip_address'
+      });
+      
+      // 获取最近一周的访问量趋势
+      const oneWeekAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
+      const weeklyVisits = await Visit.count({
+        where: {
+          visited_at: {
+            [Op.gte]: oneWeekAgo
+          }
+        }
+      });
+      
+      // 获取最近一个月的访问量趋势
+      const oneMonthAgo = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000);
+      const monthlyVisits = await Visit.count({
+        where: {
+          visited_at: {
+            [Op.gte]: oneMonthAgo
+          }
+        }
+      });
+      
+      // 按日期分组的访问量趋势（最近一周）
+      const weeklyTrend = await Visit.findAll({
+        attributes: [
+          [sequelize.fn('DATE', sequelize.col('visited_at')), 'date'],
+          [sequelize.fn('COUNT', sequelize.col('id')), 'count']
+        ],
+        where: {
+          visited_at: {
+            [Op.gte]: oneWeekAgo
+          }
+        },
+        group: [sequelize.fn('DATE', sequelize.col('visited_at'))],
+        order: [[sequelize.fn('DATE', sequelize.col('visited_at')), 'ASC']]
+      });
+      
+      // 按日期分组的访问量趋势（最近一个月）
+      const monthlyTrend = await Visit.findAll({
+        attributes: [
+          [sequelize.fn('DATE', sequelize.col('visited_at')), 'date'],
+          [sequelize.fn('COUNT', sequelize.col('id')), 'count']
+        ],
+        where: {
+          visited_at: {
+            [Op.gte]: oneMonthAgo
+          }
+        },
+        group: [sequelize.fn('DATE', sequelize.col('visited_at'))],
+        order: [[sequelize.fn('DATE', sequelize.col('visited_at')), 'ASC']]
+      });
+      
       // 获取最近的职位
       const recentJobs = await Job.findAll({
         limit: 5,
@@ -111,7 +177,7 @@ class AdminController {
       const expiredJobs = await Job.count({
         where: {
           expires_at: {
-            [require('sequelize').Op.lt]: new Date()
+            [Op.lt]: new Date()
           }
         }
       });
@@ -121,7 +187,13 @@ class AdminController {
           totalUsers,
           totalJobs,
           expiredJobs,
-          recentJobs
+          recentJobs,
+          totalVisits,
+          onlineUsers,
+          weeklyVisits,
+          monthlyVisits,
+          weeklyTrend,
+          monthlyTrend
         }
       });
     } catch (error) {

@@ -5,6 +5,7 @@ import './AdminStyles.css'
 const AdminPage = () => {
   const [users, setUsers] = useState([])
   const [jobs, setJobs] = useState([])
+  const [dashboardData, setDashboardData] = useState(null)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState(null)
   const [activeTab, setActiveTab] = useState('dashboard')
@@ -28,8 +29,7 @@ const AdminPage = () => {
     setLoading(true)
     try {
       const response = await adminAPI.getDashboardData()
-      // 这里可以设置仪表板数据状态
-      console.log(response.data)
+      setDashboardData(response.data.dashboardData)
     } catch (err) {
       setError('获取仪表板数据失败')
     } finally {
@@ -197,7 +197,10 @@ const AdminPage = () => {
       <div className="admin-tabs">
         <button 
           className={activeTab === 'dashboard' ? 'active' : ''}
-          onClick={() => setActiveTab('dashboard')}
+          onClick={() => {
+            setActiveTab('dashboard')
+            fetchDashboardData()
+          }}
         >
           仪表板
         </button>
@@ -233,7 +236,81 @@ const AdminPage = () => {
         {activeTab === 'dashboard' && (
           <div className="dashboard-tab">
             <h2>仪表板</h2>
-            <p>欢迎来到管理员面板</p>
+            {loading ? (
+              <div>加载中...</div>
+            ) : dashboardData ? (
+              <div className="dashboard-stats">
+                <div className="stats-grid">
+                  <div className="stat-card">
+                    <h3>总访问量</h3>
+                    <p className="stat-value">{dashboardData.totalVisits}</p>
+                  </div>
+                  <div className="stat-card">
+                    <h3>当前在线人数</h3>
+                    <p className="stat-value">{dashboardData.onlineUsers}</p>
+                  </div>
+                  <div className="stat-card">
+                    <h3>注册用户数</h3>
+                    <p className="stat-value">{dashboardData.totalUsers}</p>
+                  </div>
+                  <div className="stat-card">
+                    <h3>职位总数</h3>
+                    <p className="stat-value">{dashboardData.totalJobs}</p>
+                  </div>
+                </div>
+                
+                <div className="trend-section">
+                  <h3>访问趋势</h3>
+                  <div className="trend-grid">
+                    <div className="trend-card">
+                      <h4>最近一周 ({dashboardData.weeklyVisits} 次访问)</h4>
+                      <div className="trend-chart">
+                        {dashboardData.weeklyTrend && dashboardData.weeklyTrend.length > 0 ? (
+                          <div className="chart-bars">
+                            {dashboardData.weeklyTrend.map((item, index) => (
+                              <div key={index} className="chart-bar">
+                                <div 
+                                  className="bar-fill" 
+                                  style={{ height: `${(item.count / Math.max(...dashboardData.weeklyTrend.map(d => d.count))) * 100}%` }}
+                                ></div>
+                                <div className="bar-label">{new Date(item.date).toLocaleDateString('zh-CN', { month: 'short', day: 'numeric' })}</div>
+                                <div className="bar-value">{item.count}</div>
+                              </div>
+                            ))}
+                          </div>
+                        ) : (
+                          <p>暂无数据</p>
+                        )}
+                      </div>
+                    </div>
+                    
+                    <div className="trend-card">
+                      <h4>最近一个月 ({dashboardData.monthlyVisits} 次访问)</h4>
+                      <div className="trend-chart">
+                        {dashboardData.monthlyTrend && dashboardData.monthlyTrend.length > 0 ? (
+                          <div className="chart-bars">
+                            {dashboardData.monthlyTrend.map((item, index) => (
+                              <div key={index} className="chart-bar">
+                                <div 
+                                  className="bar-fill" 
+                                  style={{ height: `${(item.count / Math.max(...dashboardData.monthlyTrend.map(d => d.count))) * 100}%` }}
+                                ></div>
+                                <div className="bar-label">{new Date(item.date).toLocaleDateString('zh-CN', { month: 'short', day: 'numeric' })}</div>
+                                <div className="bar-value">{item.count}</div>
+                              </div>
+                            ))}
+                          </div>
+                        ) : (
+                          <p>暂无数据</p>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            ) : (
+              <p>欢迎来到管理员面板</p>
+            )}
           </div>
         )}
         
