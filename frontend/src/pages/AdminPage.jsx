@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { adminAPI, jobAPI } from '../services/api'
+import { authAPI, adminAPI, jobAPI } from '../services/api'
 import './AdminStyles.css'
 
 const AdminPage = () => {
@@ -9,6 +9,19 @@ const AdminPage = () => {
   const [error, setError] = useState(null)
   const [activeTab, setActiveTab] = useState('dashboard')
   const [file, setFile] = useState(null)
+  const [isLoggedIn, setIsLoggedIn] = useState(false)
+  const [loginForm, setLoginForm] = useState({
+    username: '',
+    password: ''
+  })
+
+  // 检查是否已登录
+  useEffect(() => {
+    const token = localStorage.getItem('adminToken')
+    if (token) {
+      setIsLoggedIn(true)
+    }
+  }, [])
 
   // 获取仪表板数据
   const fetchDashboardData = async () => {
@@ -97,10 +110,92 @@ const AdminPage = () => {
     setFile(e.target.files[0])
   }
 
+  // 处理登录表单输入
+  const handleLoginChange = (e) => {
+    setLoginForm({
+      ...loginForm,
+      [e.target.name]: e.target.value
+    })
+  }
+
+  // 处理管理员登录
+  const handleAdminLogin = async (e) => {
+    e.preventDefault()
+    setLoading(true)
+    setError(null)
+    
+    try {
+      const response = await authAPI.adminLogin(loginForm)
+      // 保存token到localStorage
+      localStorage.setItem('adminToken', response.data.token)
+      setIsLoggedIn(true)
+    } catch (err) {
+      setError(err.response?.data?.error || '登录失败')
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  // 处理管理员登出
+  const handleAdminLogout = () => {
+    localStorage.removeItem('adminToken')
+    setIsLoggedIn(false)
+    setLoginForm({
+      username: '',
+      password: ''
+    })
+  }
+
+  // 如果未登录，显示登录表单
+  if (!isLoggedIn) {
+    return (
+      <div className="admin-page">
+        <div className="admin-login-container">
+          <h1>管理员登录</h1>
+          {error && <div className="error-message">{error}</div>}
+          <form onSubmit={handleAdminLogin}>
+            <div className="form-group">
+              <label htmlFor="username">管理员用户名:</label>
+              <input
+                type="text"
+                id="username"
+                name="username"
+                value={loginForm.username}
+                onChange={handleLoginChange}
+                required
+              />
+            </div>
+            <div className="form-group">
+              <label htmlFor="password">密码:</label>
+              <input
+                type="password"
+                id="password"
+                name="password"
+                value={loginForm.password}
+                onChange={handleLoginChange}
+                required
+              />
+            </div>
+            <button type="submit" disabled={loading}>
+              {loading ? '登录中...' : '登录'}
+            </button>
+          </form>
+          <div className="login-info">
+            <p>用户名: fejobhubadmin</p>
+            <p>密码: fejobhubAdmin&250901</p>
+          </div>
+        </div>
+      </div>
+    )
+  }
+
   return (
     <div className="admin-page">
       <div className="admin-header">
         <h1>管理员面板</h1>
+        <button className="logout-button" onClick={handleAdminLogout}>
+          登出
+        </button>
       </div>
       
       <div className="admin-tabs">

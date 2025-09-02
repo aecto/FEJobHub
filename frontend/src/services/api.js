@@ -31,7 +31,10 @@ api.interceptors.response.use(
       // token过期或无效，清除本地存储并跳转到登录页
       localStorage.removeItem('token')
       localStorage.removeItem('user')
-      window.location.href = '/login'
+      // 只有在访问非管理员登录页面时才跳转
+      if (!window.location.pathname.includes('/admin')) {
+        window.location.href = '/login'
+      }
     }
     return Promise.reject(error)
   }
@@ -41,6 +44,7 @@ api.interceptors.response.use(
 export const authAPI = {
   register: (userData) => api.post('/auth/register', userData),
   login: (credentials) => api.post('/auth/login', credentials),
+  adminLogin: (credentials) => api.post('/auth/admin-login', credentials),
   getCurrentUser: () => api.get('/auth/profile'),
   logout: () => api.post('/auth/logout')
 }

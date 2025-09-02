@@ -54,6 +54,50 @@ class AuthController {
   }
   
   /**
+   * 管理员登录
+   * @param {Object} req - 请求对象
+   * @param {Object} res - 响应对象
+   */
+  static async adminLogin(req, res) {
+    try {
+      const { username, password } = req.body;
+      
+      // 验证必填字段
+      if (!username || !password) {
+        return res.status(400).json({ error: '用户名和密码为必填项' });
+      }
+      
+      // 检查管理员凭据（硬编码的管理员账户）
+      if (username !== 'fejobhubadmin' || password !== 'fejobhubAdmin&250901') {
+        return res.status(401).json({ error: '用户名或密码错误' });
+      }
+      
+      // 创建管理员用户对象
+      const adminUser = {
+        id: 0,
+        username: 'fejobhubadmin',
+        email: 'admin@fejobhub.com',
+        role: 'admin'
+      };
+      
+      // 生成JWT token
+      const token = jwt.sign(
+        { id: adminUser.id, username: adminUser.username, role: adminUser.role },
+        process.env.JWT_SECRET,
+        { expiresIn: process.env.JWT_EXPIRES_IN }
+      );
+      
+      res.json({
+        success: true,
+        token,
+        user: adminUser
+      });
+    } catch (error) {
+      res.status(500).json({ error: '管理员登录失败' });
+    }
+  }
+  
+  /**
    * 获取当前用户信息
    * @param {Object} req - 请求对象
    * @param {Object} res - 响应对象
