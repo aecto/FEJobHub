@@ -1,13 +1,14 @@
 const { Sequelize } = require('sequelize');
+require('dotenv').config();
 
 // 从环境变量获取数据库配置
 const sequelize = new Sequelize(
-  process.env.DB_NAME,
-  process.env.DB_USER,
-  process.env.DB_PASSWORD,
+  process.env.DB_NAME || 'fejobhub',
+  process.env.DB_USER || 'root',
+  process.env.DB_PASSWORD || '123456',
   {
-    host: process.env.DB_HOST,
-    port: process.env.DB_PORT,
+    host: process.env.DB_HOST || 'localhost',
+    port: process.env.DB_PORT || 3306,
     dialect: 'mysql',
     logging: false, // 设置为true可以查看SQL日志
     pool: {

@@ -66,6 +66,31 @@ class AdminController {
   }
   
   /**
+   * 删除职位
+   * @param {Object} req - 请求对象
+   * @param {Object} res - 响应对象
+   */
+  static async deleteJob(req, res) {
+    try {
+      const { id } = req.params;
+      
+      const job = await Job.findByPk(id);
+      if (!job) {
+        return res.status(404).json({ error: '职位不存在' });
+      }
+      
+      await job.destroy();
+      
+      res.json({ message: '职位删除成功' });
+    } catch (error) {
+      res.status(500).json({ 
+        error: '删除职位失败',
+        details: error.message 
+      });
+    }
+  }
+  
+  /**
    * 获取管理员仪表板数据
    * @param {Object} req - 请求对象
    * @param {Object} res - 响应对象
