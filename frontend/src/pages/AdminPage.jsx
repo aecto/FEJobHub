@@ -180,10 +180,6 @@ const AdminPage = () => {
               {loading ? '登录中...' : '登录'}
             </button>
           </form>
-          <div className="login-info">
-            <p>用户名: fejobhubadmin</p>
-            <p>密码: fejobhubAdmin&250901</p>
-          </div>
         </div>
       </div>
     )

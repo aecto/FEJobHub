@@ -1,6 +1,7 @@
 const AuthService = require('../services/authService');
 const User = require('../models/User');
 const jwt = require('jsonwebtoken');
+const bcrypt = require('bcryptjs');
 
 class AuthController {
   /**
@@ -68,22 +69,37 @@ class AuthController {
         return res.status(400).json({ error: '用户名和密码为必填项' });
       }
       
-      // 检查管理员凭据（硬编码的管理员账户）
-      if (username !== 'fejobhubadmin' || password !== 'fejobhubAdmin&250901') {
+      // 从数据库查找用户
+      const user = await User.findOne({ 
+        where: { username: username },
+        attributes: { exclude: ['password_hash'] }
+      });
+      
+      // 检查用户是否存在
+      if (!user) {
         return res.status(401).json({ error: '用户名或密码错误' });
       }
       
-      // 创建管理员用户对象
-      const adminUser = {
-        id: 0,
-        username: 'fejobhubadmin',
-        email: 'admin@fejobhub.com',
-        role: 'admin'
-      };
+      // 检查用户是否为管理员
+      if (user.role !== 'admin') {
+        return res.status(403).json({ error: '需要管理员权限' });
+      }
+      
+      // 验证密码
+      // 注意：这里需要获取包含密码哈希的完整用户信息
+      const fullUser = await User.findByPk(user.id);
+      const isPasswordValid = await bcrypt.compare(password, fullUser.password_hash);
+      
+      if (!isPasswordValid) {
+        return res.status(401).json({ error: '用户名或密码错误' });
+      }
+      
+      // 更新最后登录时间
+      await user.update({ last_login: new Date() });
       
       // 生成JWT token
       const token = jwt.sign(
-        { id: adminUser.id, username: adminUser.username, role: adminUser.role },
+        { id: user.id, username: user.username, role: user.role },
         process.env.JWT_SECRET,
         { expiresIn: process.env.JWT_EXPIRES_IN }
       );
@@ -91,7 +107,12 @@ class AuthController {
       res.json({
         success: true,
         token,
-        user: adminUser
+        user: {
+          id: user.id,
+          username: user.username,
+          email: user.email,
+          role: user.role
+        }
       });
     } catch (error) {
       res.status(500).json({ error: '管理员登录失败' });
