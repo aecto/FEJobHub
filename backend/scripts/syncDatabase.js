@@ -2,6 +2,7 @@ const sequelize = require('../config/database');
 const Job = require('../models/Job');
 const User = require('../models/User');
 const Visit = require('../models/Visit');
+const Company = require('../models/Company');
 const ExcelParser = require('../services/excelParser');
 const path = require('path');
 const fs = require('fs');
@@ -71,6 +72,9 @@ async function importExcelData() {
       
       // 处理数据
       const processedData = ExcelParser.processJobData(rawData);
+      
+      // 处理公司信息
+      await ExcelParser.processCompanies(processedData);
       
       // 插入数据库
       const result = await ExcelParser.insertJobs(processedData);

@@ -1,6 +1,7 @@
 const XLSX = require('xlsx');
 const path = require('path');
 const Job = require('../models/Job');
+const Company = require('../models/Company');
 
 class ExcelParser {
   /**
@@ -24,6 +25,59 @@ class ExcelParser {
     } catch (error) {
       throw new Error(`解析XLSX文件失败: ${error.message}`);
     }
+  }
+  
+  /**
+   * 从job_apply_url中提取career_url
+   * @param {string} jobApplyUrl - 职位申请链接
+   * @returns {string} career_url
+   */
+  static extractCareerUrl(jobApplyUrl) {
+    if (!jobApplyUrl) return null;
+    
+    // 查找job、jobs或career关键词
+    const jobIndex = jobApplyUrl.indexOf('/job/');
+    const jobsIndex = jobApplyUrl.indexOf('/jobs/');
+    const careerIndex = jobApplyUrl.indexOf('/career/');
+    
+    // 找到最早出现的关键词
+    let earliestIndex = -1;
+    let earliestPosition = -1;
+    
+    if (jobIndex !== -1) {
+      earliestIndex = jobIndex;
+      earliestPosition = jobIndex + 5; // +5 是为了跳过 '/job/' 部分
+    }
+    
+    if (jobsIndex !== -1 && (earliestIndex === -1 || jobsIndex < earliestIndex)) {
+      earliestIndex = jobsIndex;
+      earliestPosition = jobsIndex + 6; // +6 是为了跳过 '/jobs/' 部分
+    }
+    
+    if (careerIndex !== -1 && (earliestIndex === -1 || careerIndex < earliestIndex)) {
+      earliestIndex = careerIndex;
+      earliestPosition = careerIndex + 8; // +8 是为了跳过 '/career/' 部分
+    }
+    
+    if (earliestIndex !== -1) {
+      return jobApplyUrl.substring(0, earliestPosition - 1); // -1 是为了去掉最后的斜杠
+    }
+    
+    // 如果没有找到job、jobs或career，则查找.net或.com
+    const dotNetIndex = jobApplyUrl.indexOf('.net/');
+    const dotComIndex = jobApplyUrl.indexOf('.com/');
+    
+    // 找到最早出现的域名后缀
+    let domainIndex = -1;
+    if (dotNetIndex !== -1) domainIndex = dotNetIndex + 4; // +4 是为了包含.net
+    if (dotComIndex !== -1 && (domainIndex === -1 || dotComIndex < domainIndex)) domainIndex = dotComIndex + 4; // +4 是为了包含.com
+    
+    if (domainIndex !== -1) {
+      return jobApplyUrl.substring(0, domainIndex);
+    }
+    
+    // 如果都找不到，返回原始URL
+    return jobApplyUrl;
   }
   
   /**
@@ -64,6 +118,43 @@ class ExcelParser {
         status: 'active'
       };
     });
+  }
+  
+  /**
+   * 处理公司数据并插入数据库
+   * @param {Array} jobData - 职位数据
+   * @returns {Promise} 处理结果
+   */
+  static async processCompanies(jobData) {
+    try {
+      for (const job of jobData) {
+        const companyName = job.company_name;
+        const jobApplyUrl = job.job_apply_url;
+        
+        // 检查公司是否已存在
+        const existingCompany = await Company.findOne({
+          where: {
+            company_name: companyName
+          }
+        });
+        
+        // 如果公司不存在，则创建新记录
+        if (!existingCompany) {
+          const careerUrl = this.extractCareerUrl(jobApplyUrl);
+          await Company.create({
+            company_name: companyName,
+            career_url: careerUrl
+          });
+        }
+      }
+      
+      return {
+        success: true,
+        message: '公司信息处理完成'
+      };
+    } catch (error) {
+      throw new Error(`处理公司信息失败: ${error.message}`);
+    }
   }
   
   /**

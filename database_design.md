@@ -31,7 +31,17 @@
 | created_at | DATETIME | 创建时间 | NOT NULL, DEFAULT CURRENT_TIMESTAMP |
 | last_login | DATETIME | 最后登录时间 | NULL |
 
-## 3. 数据处理逻辑
+## 3. 公司表 (companies)
+
+| 字段名 | 类型 | 描述 | 约束 |
+|--------|------|------|------|
+| id | BIGINT | 主键 | PRIMARY KEY, AUTO_INCREMENT |
+| company_name | VARCHAR(255) | 公司名称 | NOT NULL, UNIQUE |
+| career_url | VARCHAR(500) | 公司招聘页面URL | NULL |
+| created_at | DATETIME | 创建时间 | NOT NULL, DEFAULT CURRENT_TIMESTAMP |
+| updated_at | DATETIME | 更新时间 | NOT NULL, DEFAULT CURRENT_TIMESTAMP |
+
+## 4. 数据处理逻辑
 
 1. 系统每日检查新上传的XLSX文件（文件名格式为YYYY-MM-DD.xlsx）
 2. 解析XLSX文件内容，提取职位信息
@@ -41,3 +51,9 @@
 6. 验证数据完整性，确保必填字段不为空
 7. 如果薪水范围为空，则设置为"面议"
 8. 将数据插入jobs表
+9. 同时处理公司信息：
+   - 检查company_name是否已存在于companies表中
+   - 如果不存在，则从job_apply_url中提取career_url并创建新记录
+   - career_url提取规则：
+     - 查找字符串中的/job、/jobs或/career，截取到这些字符串之前的部分
+     - 如果没有找到上述字符串，则查找.net或.com，截取到这些字符串为止
