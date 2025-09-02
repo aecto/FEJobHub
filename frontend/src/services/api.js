@@ -9,8 +9,8 @@ const api = axios.create({
 // 请求拦截器
 api.interceptors.request.use(
   (config) => {
-    // 从localStorage获取token
-    const token = localStorage.getItem('token')
+    // 从localStorage获取token（普通用户token或管理员token）
+    const token = localStorage.getItem('token') || localStorage.getItem('adminToken')
     if (token) {
       config.headers.Authorization = `Bearer ${token}`
     }
@@ -31,6 +31,7 @@ api.interceptors.response.use(
       // token过期或无效，清除本地存储并跳转到登录页
       localStorage.removeItem('token')
       localStorage.removeItem('user')
+      localStorage.removeItem('adminToken')
       // 只有在访问非管理员登录页面时才跳转
       if (!window.location.pathname.includes('/admin')) {
         window.location.href = '/login'
