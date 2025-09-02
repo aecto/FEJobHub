@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useLocation } from 'react-router-dom'
 import { authAPI } from '../services/api'
 import './AuthStyles.css'
 
@@ -12,6 +12,10 @@ const LoginPage = () => {
   const [loading, setLoading] = useState(false)
   
   const navigate = useNavigate()
+  const location = useLocation()
+  
+  // 获取来源页面，如果没有则默认为/jobs
+  const from = location.state?.from?.pathname || '/jobs'
 
   const handleChange = (e) => {
     setFormData({
@@ -31,8 +35,8 @@ const LoginPage = () => {
       localStorage.setItem('token', response.data.token)
       localStorage.setItem('user', JSON.stringify(response.data.user))
       
-      // 跳转到主页
-      navigate('/')
+      // 跳转到来源页面或默认的jobs页面
+      navigate(from, { replace: true })
     } catch (err) {
       setError(err.response?.data?.error || '登录失败')
     } finally {

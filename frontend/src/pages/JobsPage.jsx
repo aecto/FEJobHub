@@ -2,12 +2,14 @@ import React, { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import JobList from '../components/job/JobList'
 import JobDetail from '../components/job/JobDetail'
-import { jobAPI } from '../services/api'
+import { jobAPI, authAPI } from '../services/api'
 import '../components/job/JobStyles.css'
 
 const JobsPage = () => {
   const navigate = useNavigate()
   const [selectedJob, setSelectedJob] = useState(null)
+  const [currentUser, setCurrentUser] = useState(null)
+  const [showDropdown, setShowDropdown] = useState(false)
 
   // 页面加载时默认选择第一个职位
   useEffect(() => {
@@ -23,7 +25,33 @@ const JobsPage = () => {
     }
 
     fetchFirstJob()
+    
+    // 检查用户登录状态
+    checkUserStatus()
   }, [])
+
+  const checkUserStatus = () => {
+    const user = localStorage.getItem('user')
+    if (user) {
+      setCurrentUser(JSON.parse(user))
+    }
+  }
+
+  const handleLogout = async () => {
+    try {
+      await authAPI.logout()
+    } catch (error) {
+      console.error('登出请求失败:', error)
+    } finally {
+      // 清除本地存储
+      localStorage.removeItem('token')
+      localStorage.removeItem('user')
+      setCurrentUser(null)
+      setShowDropdown(false)
+      // 不需要跳转，保持在当前页面
+      // navigate('/login')
+    }
+  }
 
   return (
     <div className="jobs-page">
@@ -31,6 +59,27 @@ const JobsPage = () => {
       <header className="jobs-header">
         <div className="header-content">
           <h1 className="logo" onClick={() => navigate('/')}>FEJobHub</h1>
+          <div className="user-section">
+            {currentUser ? (
+              <div className="user-dropdown">
+                <div 
+                  className="user-info" 
+                  onClick={() => setShowDropdown(!showDropdown)}
+                >
+                  {currentUser.username}
+                </div>
+                {showDropdown && (
+                  <div className="dropdown-menu">
+                    <button onClick={handleLogout}>Sign Out</button>
+                  </div>
+                )}
+              </div>
+            ) : (
+              <button className="login-button" onClick={() => navigate('/login', { state: { from: { pathname: '/jobs' } } })}>
+                登录
+              </button>
+            )}
+          </div>
         </div>
       </header>
       
