@@ -2,6 +2,7 @@ const User = require('../models/User');
 const Job = require('../models/Job');
 const Visit = require('../models/Visit');
 const { Op } = require('sequelize');
+const sequelize = require('../config/database');
 
 class AdminController {
   /**

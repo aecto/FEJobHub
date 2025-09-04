@@ -3,10 +3,18 @@ const router = express.Router();
 const JobController = require('../controllers/jobController');
 const { authenticateToken, authorizeAdmin } = require('../middleware/authMiddleware');
 const multer = require('multer');
+const path = require('path');
+const fs = require('fs');
+
+// 确保datasource目录存在
+const datasourceDir = path.join(__dirname, '../../datasource');
+if (!fs.existsSync(datasourceDir)) {
+  fs.mkdirSync(datasourceDir, { recursive: true });
+}
 
 // 配置文件上传
 const storage = multer.diskStorage({
-  destination: process.env.UPLOAD_PATH || './uploads',
+  destination: datasourceDir,  // 修改为datasource文件夹
   filename: function (req, file, cb) {
     // 使用原文件名
     cb(null, file.originalname);

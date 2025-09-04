@@ -9,14 +9,14 @@ dotenv.config();
 
 // 创建Express应用
 const app = express();
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 3001;  // 修改默认端口为3001
 
-// 确保上传目录存在
+// 确保datasource目录存在
 const fs = require('fs');
 const path = require('path');
-const uploadDir = process.env.UPLOAD_PATH || './uploads';
-if (!fs.existsSync(uploadDir)) {
-  fs.mkdirSync(uploadDir, { recursive: true });
+const datasourceDir = path.join(__dirname, '../datasource');
+if (!fs.existsSync(datasourceDir)) {
+  fs.mkdirSync(datasourceDir, { recursive: true });
 }
 
 // 中间件
@@ -28,8 +28,8 @@ app.use(express.urlencoded({ extended: true }));
 const recordVisit = require('./middleware/visitMiddleware');
 app.use(recordVisit);
 
-// 静态文件服务
-app.use('/uploads', express.static(uploadDir));
+// 静态文件服务 - 提供对datasource目录的访问
+app.use('/datasource', express.static(datasourceDir));
 
 // 基本路由
 app.get('/', (req, res) => {

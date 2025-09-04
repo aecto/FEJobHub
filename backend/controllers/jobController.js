@@ -18,6 +18,10 @@ class JobController {
       // 检查文件扩展名
       const fileExtension = path.extname(req.file.originalname).toLowerCase();
       if (fileExtension !== '.xlsx') {
+        // 确保删除不支持的文件
+        if (fs.existsSync(req.file.path)) {
+          fs.unlinkSync(req.file.path);
+        }
         return res.status(400).json({ error: '只支持XLSX文件格式' });
       }
       
@@ -30,19 +34,15 @@ class JobController {
       // 插入数据库
       const result = await ExcelParser.insertJobs(jobData);
       
-      // 删除临时文件
-      fs.unlinkSync(req.file.path);
+      // 文件会保留在datasource目录中，不需要删除
       
       res.json({
         message: '文件处理成功',
+        filePath: req.file.path, // 返回文件路径以便确认
         ...result
       });
     } catch (error) {
-      // 确保删除临时文件
-      if (req.file && req.file.path) {
-        fs.unlinkSync(req.file.path);
-      }
-      
+      // 确保在出错时也返回错误信息
       res.status(500).json({ 
         error: '文件处理失败',
         details: error.message 
