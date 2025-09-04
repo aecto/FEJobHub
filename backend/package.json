@@ -26,6 +26,7 @@
     "mysql2": "^3.6.0",
     "node-schedule": "^2.1.1",
     "sequelize": "^6.32.1",
+    "sqlite3": "^5.1.7",
     "xlsx": "^0.18.5"
   },
   "devDependencies": {
