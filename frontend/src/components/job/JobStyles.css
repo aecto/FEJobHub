@@ -365,14 +365,14 @@
 }
 
 .job-actions {
-  margin-top: 20px;
+  margin-top: 0;
   padding-top: 20px;
   border-top: 1px solid #e0e0e0;
   text-align: center;
 }
 
 .apply-button {
-  padding: 12px 30px;
+  padding: 16px 30px;
   background-color: #28a745;
   color: white;
   border: none;
