@@ -28,31 +28,73 @@ const JobPagination = ({ pagination, onPageChange }) => {
 
   return (
     <div className="job-pagination">
-      <button 
-        className="pagination-button"
-        onClick={() => onPageChange(page - 1)}
-        disabled={page <= 1}
-      >
-        上一页
-      </button>
+      {page > 1 && (
+        <>
+          <a 
+            className="pagination-link pagination-icon"
+            onClick={(e) => {
+              e.preventDefault()
+              onPageChange(1)
+            }}
+            href="#"
+            title="首页"
+          >
+            &laquo;
+          </a>
+          <a 
+            className="pagination-link pagination-icon"
+            onClick={(e) => {
+              e.preventDefault()
+              onPageChange(page - 1)
+            }}
+            href="#"
+            title="上一页"
+          >
+            &lsaquo;
+          </a>
+        </>
+      )}
       
       {getPageNumbers().map((pageNum) => (
-        <button
+        <a
           key={pageNum}
-          className={`pagination-button ${pageNum === page ? 'active' : ''}`}
-          onClick={() => onPageChange(pageNum)}
+          className={`pagination-link ${pageNum === page ? 'active' : ''}`}
+          onClick={(e) => {
+            e.preventDefault()
+            onPageChange(pageNum)
+          }}
+          href="#"
         >
           {pageNum}
-        </button>
+        </a>
       ))}
       
-      <button 
-        className="pagination-button"
-        onClick={() => onPageChange(page + 1)}
-        disabled={page >= totalPages}
-      >
-        下一页
-      </button>
+      {page < totalPages && (
+        <>
+          <a 
+            className="pagination-link pagination-icon"
+            onClick={(e) => {
+              e.preventDefault()
+              onPageChange(page + 1)
+            }}
+            href="#"
+            title="下一页"
+          >
+            &rsaquo;
+          </a>
+          <a 
+            className="pagination-link pagination-icon"
+            onClick={(e) => {
+              e.preventDefault()
+              onPageChange(totalPages)
+            }}
+            href="#"
+            title="末页"
+          >
+            &raquo;
+          </a>
+        </>
+      )}
     </div>
   )
 }
