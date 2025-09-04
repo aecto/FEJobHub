@@ -13,7 +13,7 @@ class CronService {
    */
   static startCronJobs() {
     // 每天凌晨2点执行Python脚本和CSV处理任务
-    const dailyJob = schedule.scheduleJob('0 0 2 * * *', async () => {
+    const dailyJob = schedule.scheduleJob('0 0 2 * * 2，6', async () => {
       console.log('开始执行每日Python脚本和CSV处理任务');
       await CronService.processDailyCSVFile();
     });

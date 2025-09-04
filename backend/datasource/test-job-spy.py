@@ -33,8 +33,8 @@ if os.path.exists(csv_file):
 for search in ("software","hardware","tester","QA","automation","software manager","project"):
     jobs = scrape_jobs(site_name=["indeed"],
                        search_term=search,
-                       results_wanted=10,
-                       hours_old=24,
+                       results_wanted=200,
+                       hours_old=72,
                        country_indeed='China',
                        description_format="html")
 
