@@ -302,12 +302,43 @@
 .job-meta {
   display: flex;
   gap: 20px;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
+  align-items: center;
 }
 
 .job-meta span {
   font-size: 14px;
   color: #666;
+  white-space: nowrap;
+}
+
+.share-button {
+  margin-left: auto;
+  background: none;
+  border: 1px solid #007bff;
+  border-radius: 4px;
+  padding: 4px 8px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+  width: 30px;
+  min-width: 30px;
+  height: 30px;
+  flex-shrink: 0;
+  color: #007bff;
+}
+
+.share-button:hover {
+  background-color: #007bff;
+  color: white;
+}
+
+.share-button svg {
+  vertical-align: middle;
+  width: 16px;
+  height: 16px;
 }
 
 .job-content {
