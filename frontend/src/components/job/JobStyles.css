@@ -203,6 +203,7 @@
   border-radius: 8px;
   cursor: pointer;
   transition: all 0.2s ease;
+  text-align: left; /* 左侧对齐 */
 }
 
 .job-list-item:hover {
@@ -221,19 +222,47 @@
   font-weight: 600;
   margin-bottom: 5px;
   color: #333;
+  text-align: left; /* 左侧对齐 */
 }
 
 .job-list-item .job-company {
   font-size: 14px;
   color: #666;
   margin-bottom: 5px;
+  text-align: left; /* 左侧对齐 */
 }
 
 .job-list-item .job-meta {
   display: flex;
-  justify-content: space-between;
-  font-size: 12px;
-  color: #999;
+  align-items: center;
+  gap: 0; /* 移除间隙 */
+  font-size: 14px; /* 与job-company字体大小一致 */
+  color: #666; /* 灰色 */
+  text-align: left; /* 左侧对齐 */
+}
+
+/* 工作地点灰色字体（移除深蓝色加粗） */
+.job-list-item .job-location {
+  color: #666; /* 灰色 */
+}
+
+/* Remote标签样式（移除边框，改为灰色） */
+.remote-badge {
+  color: #666; /* 灰色 */
+  font-size: 14px; /* 与job-company字体大小一致 */
+}
+
+/* 逗号样式 */
+.comma {
+  color: #666; /* 灰色 */
+  font-size: 14px; /* 与job-company字体大小一致 */
+}
+
+/* 发布时间样式（字体变小） */
+.job-list-item .job-posted {
+  font-size: 14px; /* 与job-company字体大小一致 */
+  color: #666; /* 灰色 */
+  text-align: left; /* 左侧对齐 */
 }
 
 /* 职位详情样式 */
