@@ -40,7 +40,7 @@ class JobController {
       // 插入数据库
       const result = await CronService.insertJobs(jobData);
       
-      // 备份文件到databackup目录
+      // 备份文件到databackup目录（移动而不是复制）
       await JobController.backupFile(req.file.path, req.file.originalname);
       
       res.json({
@@ -58,7 +58,7 @@ class JobController {
   }
   
   /**
-   * 备份文件到databackup目录
+   * 备份文件到databackup目录（移动文件而不是复制）
    * @param {string} sourcePath - 源文件路径
    * @param {string} originalName - 原始文件名
    */
@@ -76,14 +76,14 @@ class JobController {
       const timeString = `${date.getHours().toString().padStart(2, '0')}${date.getMinutes().toString().padStart(2, '0')}${date.getSeconds().toString().padStart(2, '0')}`;
       const backupFileName = `${path.parse(originalName).name}_${dateString}_${timeString}${path.extname(originalName)}`;
       
-      // 复制文件到备份目录
+      // 移动文件到备份目录（而不是复制）
       const backupPath = path.join(backupDir, backupFileName);
-      fs.copyFileSync(sourcePath, backupPath);
+      fs.renameSync(sourcePath, backupPath);
       
-      console.log(`文件已备份到: ${backupPath}`);
+      console.log(`文件已移动到: ${backupPath}`);
     } catch (error) {
-      console.error('文件备份失败:', error.message);
-      // 不抛出错误，因为备份失败不应该影响主要功能
+      console.error('文件移动失败:', error.message);
+      // 不抛出错误，因为移动失败不应该影响主要功能
     }
   }
   
