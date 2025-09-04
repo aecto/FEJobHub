@@ -80,7 +80,8 @@ FEJobHub/
    ```
 
 3. 配置环境变量:
-   - 复制 [.env.example](file:///Users/libin/Work/Qoder/FEJobHub/backend/.env) 为 `.env` 并修改配置
+   - 复制 `.env.example` 为 `.env` 并修改配置
+   - 设置数据库连接信息、JWT密钥等敏感信息
 
 4. 启动服务:
    ```bash
@@ -113,6 +114,43 @@ FEJobHub/
    npm run build
    ```
 
+## 环境变量配置
+
+为确保应用安全，所有敏感信息都应通过环境变量配置，不要在代码中硬编码。
+
+### 后端环境变量
+
+- `PORT`: 服务器端口，默认3001
+- `DB_HOST`: 数据库主机地址
+- `DB_USER`: 数据库用户名
+- `DB_PASSWORD`: 数据库密码
+- `DB_NAME`: 数据库名称
+- `DB_PORT`: 数据库端口
+- `JWT_SECRET`: JWT加密密钥（应使用强随机字符串）
+- `JWT_EXPIRES_IN`: JWT过期时间
+- `UPLOAD_PATH`: 文件上传路径
+
+### 配置示例
+
+```bash
+# 服务器配置
+PORT=3001
+
+# 数据库配置
+DB_HOST=localhost
+DB_USER=your_database_username
+DB_PASSWORD=your_database_password
+DB_NAME=fejobhub
+DB_PORT=3306
+
+# JWT配置（生产环境务必使用强密钥）
+JWT_SECRET=your_strong_jwt_secret_key_here
+JWT_EXPIRES_IN=24h
+
+# 文件上传配置
+UPLOAD_PATH=./uploads
+```
+
 ## 数据库配置
 
 1. 创建数据库:
@@ -120,7 +158,7 @@ FEJobHub/
    CREATE DATABASE fejobhub;
    ```
 
-2. 在 [.env](file:///Users/libin/Work/Qoder/FEJobHub/backend/.env) 文件中配置数据库连接信息
+2. 在 `.env` 文件中配置数据库连接信息
 
 3. 应用启动时会自动创建数据表
 
@@ -187,11 +225,21 @@ FEJobHub/
    }
    ```
 
-4. 启动后端服务:
+4. 在生产服务器上配置环境变量
+
+5. 启动后端服务:
    ```bash
    cd backend
    npm start
    ```
+
+## 安全建议
+
+1. **环境变量**: 生产环境中务必使用强密码和密钥，不要使用默认值
+2. **HTTPS**: 在生产环境中启用HTTPS
+3. **数据库**: 使用专用的数据库用户，限制权限
+4. **JWT**: 使用足够强度的密钥，定期更换
+5. **文件上传**: 限制上传文件类型和大小，进行安全检查
 
 ## 开发计划
 
@@ -199,16 +247,3 @@ FEJobHub/
 - [x] 创建后端项目结构和配置
 - [x] 实现数据库模型和连接
 - [x] 开发XLSX文件解析和数据导入功能
-- [x] 实现定时任务处理每日XLSX文件
-- [x] 开发用户认证系统（注册、登录、权限管理）
-- [x] 创建职位管理API（增删改查、搜索、分页）
-- [x] 开发管理员功能（用户管理、职位管理）
-- [x] 创建前端项目结构和配置
-- [x] 实现职位列表和详情页面（LinkedIn风格布局）
-- [x] 开发搜索和分页功能
-- [x] 实现响应式设计，适配移动端
-- [x] 创建管理员页面
-
-## 许可证
-
-MIT
