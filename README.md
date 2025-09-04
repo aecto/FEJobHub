@@ -36,27 +36,27 @@
 FEJobHub/
 ├── backend/              # 后端代码
 │   ├── controllers/      # 控制器
-│   ├── models/           # 数据模型
-│   ├── routes/           # 路由
-│   ├── services/         # 业务逻辑
-│   ├── middleware/       # 中间件
-│   ├── config/           # 配置文件
-│   ├── uploads/          # 上传文件目录
-│   ├── server.js         # 入口文件
-│   └── package.json      # 后端依赖
-├── frontend/             # 前端代码
-│   ├── public/           # 静态资源
-│   ├── src/              # 源代码
-│   │   ├── components/   # 组件
-│   │   ├── pages/        # 页面
-│   │   ├── services/     # API服务
-│   │   ├── utils/        # 工具函数
-│   │   └── App.jsx       # 主应用
-│   ├── index.html        # HTML模板
-│   └── package.json      # 前端依赖
-├── datasource/           # 数据源文件
-│   └── 2025-09-02.xlsx   # 示例XLSX文件
-└── README.md             # 项目说明
+│   ├── models/          # 数据模型
+│   ├── routes/          # 路由
+│   ├── services/        # 业务逻辑
+│   ├── middleware/      # 中间件
+│   ├── config/          # 配置文件
+│   ├── uploads/         # 上传文件目录
+│   ├── server.js        # 入口文件
+│   └── package.json     # 后端依赖
+├── frontend/            # 前端代码
+│   ├── public/          # 静态资源
+│   ├── src/             # 源代码
+│   │   ├── components/  # 组件
+│   │   ├── pages/       # 页面
+│   │   ├── services/    # API服务
+│   │   ├── utils/       # 工具函数
+│   │   └── App.jsx      # 主应用
+│   ├── index.html       # HTML模板
+│   └── package.json     # 前端依赖
+├── datasource/          # 数据源文件
+│   └── 2025-09-02.xlsx  # 示例XLSX文件
+└── README.md            # 项目说明
 ```
 
 ## 环境要求
@@ -196,7 +196,41 @@ UPLOAD_PATH=./uploads
 - `DELETE /api/admin/users/:id` - 删除用户
 - `GET /api/admin/dashboard` - 获取仪表板数据
 
-## 部署
+## Docker容器化部署
+
+为了方便在阿里云服务器上部署，并支持将来的功能扩展和升级，项目提供了完整的Docker容器化部署方案。
+
+### 部署架构
+
+项目采用微服务架构，包含以下容器：
+
+1. **MySQL容器**: 数据库服务
+2. **后端容器**: Node.js Express应用
+3. **前端容器**: React应用（通过Nginx提供服务）
+
+### 部署步骤
+
+1. 确保服务器已安装Docker和Docker Compose
+2. 克隆项目代码到服务器
+3. 配置环境变量
+4. 运行以下命令启动服务：
+   ```bash
+   docker-compose up -d
+   ```
+
+详细部署说明请参考 [DEPLOYMENT.md](DEPLOYMENT.md) 文件。
+
+### 升级方案
+
+项目支持无缝升级：
+
+1. **前端升级**: 重新构建前端镜像并重启容器
+2. **后端升级**: 重新构建后端镜像并重启容器
+3. **数据库升级**: 通过迁移脚本处理数据库结构变更
+
+详细升级说明请参考 [DEPLOYMENT.md](DEPLOYMENT.md) 文件。
+
+## 传统部署方式
 
 1. 构建前端:
    ```bash
