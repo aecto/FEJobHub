@@ -12,11 +12,14 @@ class CronService {
    * 启动定时任务
    */
   static startCronJobs() {
+    // 注释掉原来的定时任务，改为只保留过期职位清理任务
+    /*
     // 每天凌晨2点执行Python脚本和CSV处理任务
     const dailyJob = schedule.scheduleJob('0 0 2 * * 2，6', async () => {
       console.log('开始执行每日Python脚本和CSV处理任务');
       await CronService.processDailyCSVFile();
     });
+    */
     
     // 每天凌晨1点执行过期职位清理任务
     const cleanupJob = schedule.scheduleJob('0 0 1 * * *', async () => {
@@ -28,46 +31,12 @@ class CronService {
   }
   
   /**
-   * 处理每日CSV文件
+   * 处理每日CSV文件 (已废弃，保留函数但不执行任何操作)
    */
   static async processDailyCSVFile() {
-    try {
-      const datasourceDir = path.join(__dirname, '../datasource');
-      const csvFilePath = path.join(datasourceDir, 'jobs.csv');
-      const pythonScriptPath = path.join(datasourceDir, 'test-job-spy.py');
-      
-      // 执行Python脚本
-      console.log('开始执行Python脚本');
-      const { stdout, stderr } = await execPromise(`python3 ${pythonScriptPath}`, {
-        cwd: datasourceDir
-      });
-      
-      console.log('Python脚本执行完成:', stdout);
-      if (stderr) {
-        console.error('Python脚本执行错误:', stderr);
-      }
-      
-      // 检查CSV文件是否存在
-      if (!fs.existsSync(csvFilePath)) {
-        console.log('CSV文件不存在，跳过处理');
-        return;
-      }
-      
-      console.log('开始处理CSV文件');
-      
-      // 解析CSV文件
-      const rawData = await this.parseCSVFile(csvFilePath);
-      
-      // 处理数据
-      const jobData = await this.processJobData(rawData);
-      
-      // 插入数据库
-      const result = await this.insertJobs(jobData);
-      
-      console.log(`CSV文件处理完成: ${result.message}`);
-    } catch (error) {
-      console.error('处理每日CSV文件失败:', error.message);
-    }
+    // 已废弃的函数，不再执行任何操作
+    console.log('定时CSV处理已禁用');
+    return;
   }
   
   /**
@@ -104,7 +73,7 @@ class CronService {
       expiryDate.setDate(currentDate.getDate() + 60); // 60天后过期
       
       // 读取location.json文件
-      const locationFilePath = path.join(__dirname, '../datasource/loccation.json');
+      const locationFilePath = path.join(__dirname, '../../datasource/location.json');
       const locationData = JSON.parse(fs.readFileSync(locationFilePath, 'utf8'));
       
       const processedData = [];
@@ -121,7 +90,7 @@ class CronService {
         }
         
         // 处理job_apply_url，去除utm_source=indeed及之后字符
-        let jobApplyUrl = item.job_url_direct || "";
+        let jobApplyUrl = item.job_url_direct || item.job_apply_url || "";
         const utmIndex = jobApplyUrl.indexOf('utm_source=indeed');
         if (utmIndex !== -1) {
           jobApplyUrl = jobApplyUrl.substring(0, utmIndex - 1); // -1是为了去掉前面的&
@@ -131,7 +100,7 @@ class CronService {
         const salaryRange = "面议";
         
         // 处理公司信息
-        const companyName = item.company || "";
+        const companyName = item.company || item.company_name || "";
         const companyUrlDirect = item.company_url_direct || "";
         
         // 检查公司是否已存在

@@ -2,14 +2,15 @@ const fs = require('fs');
 const path = require('path');
 const ExcelParser = require('../services/excelParser');
 const Job = require('../models/Job');
+const CronService = require('../services/cronService');
 
 class JobController {
   /**
-   * 上传并处理XLSX文件
+   * 上传并处理文件（支持XLSX和CSV）
    * @param {Object} req - 请求对象
    * @param {Object} res - 响应对象
    */
-  static async uploadExcel(req, res) {
+  static async uploadFile(req, res) {
     try {
       if (!req.file) {
         return res.status(400).json({ error: '未找到上传文件' });
@@ -17,24 +18,30 @@ class JobController {
       
       // 检查文件扩展名
       const fileExtension = path.extname(req.file.originalname).toLowerCase();
-      if (fileExtension !== '.xlsx') {
+      
+      let jobData;
+      
+      if (fileExtension === '.xlsx') {
+        // 处理XLSX文件
+        const rawData = ExcelParser.parseFile(req.file.path);
+        jobData = ExcelParser.processJobData(rawData);
+      } else if (fileExtension === '.csv') {
+        // 处理CSV文件
+        const rawData = await CronService.parseCSVFile(req.file.path);
+        jobData = await CronService.processJobData(rawData);
+      } else {
         // 确保删除不支持的文件
         if (fs.existsSync(req.file.path)) {
           fs.unlinkSync(req.file.path);
         }
-        return res.status(400).json({ error: '只支持XLSX文件格式' });
+        return res.status(400).json({ error: '只支持XLSX和CSV文件格式' });
       }
       
-      // 解析文件
-      const rawData = ExcelParser.parseFile(req.file.path);
-      
-      // 处理数据
-      const jobData = ExcelParser.processJobData(rawData);
-      
       // 插入数据库
-      const result = await ExcelParser.insertJobs(jobData);
+      const result = await CronService.insertJobs(jobData);
       
-      // 文件会保留在datasource目录中，不需要删除
+      // 备份文件到databackup目录
+      await JobController.backupFile(req.file.path, req.file.originalname);
       
       res.json({
         message: '文件处理成功',
@@ -47,6 +54,36 @@ class JobController {
         error: '文件处理失败',
         details: error.message 
       });
+    }
+  }
+  
+  /**
+   * 备份文件到databackup目录
+   * @param {string} sourcePath - 源文件路径
+   * @param {string} originalName - 原始文件名
+   */
+  static async backupFile(sourcePath, originalName) {
+    try {
+      // 确保databackup目录存在
+      const backupDir = path.join(__dirname, '../../databackup');
+      if (!fs.existsSync(backupDir)) {
+        fs.mkdirSync(backupDir, { recursive: true });
+      }
+      
+      // 生成带日期的备份文件名
+      const date = new Date();
+      const dateString = `${date.getFullYear()}${(date.getMonth() + 1).toString().padStart(2, '0')}${date.getDate().toString().padStart(2, '0')}`;
+      const timeString = `${date.getHours().toString().padStart(2, '0')}${date.getMinutes().toString().padStart(2, '0')}${date.getSeconds().toString().padStart(2, '0')}`;
+      const backupFileName = `${path.parse(originalName).name}_${dateString}_${timeString}${path.extname(originalName)}`;
+      
+      // 复制文件到备份目录
+      const backupPath = path.join(backupDir, backupFileName);
+      fs.copyFileSync(sourcePath, backupPath);
+      
+      console.log(`文件已备份到: ${backupPath}`);
+    } catch (error) {
+      console.error('文件备份失败:', error.message);
+      // 不抛出错误，因为备份失败不应该影响主要功能
     }
   }
   

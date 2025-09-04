@@ -406,11 +406,12 @@ const AdminPage = () => {
             <div className="upload-section">
               <input 
                 type="file" 
-                accept=".xlsx" 
+                accept=".xlsx,.csv" 
                 onChange={handleFileChange} 
               />
-              <button onClick={handleFileUpload}>上传XLSX文件</button>
+              <button onClick={handleFileUpload}>上传文件</button>
               {file && <p>已选择文件: {file.name}</p>}
+              <p className="upload-hint">支持上传.xlsx和.csv格式的文件</p>
             </div>
           </div>
         )}

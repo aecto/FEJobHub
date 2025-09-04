@@ -27,12 +27,12 @@ const upload = multer({
     fileSize: 5 * 1024 * 1024 // 5MB限制
   },
   fileFilter: function (req, file, cb) {
-    // 只允许XLSX文件
-    if (file.mimetype === 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' || 
-        file.originalname.endsWith('.xlsx')) {
+    // 允许XLSX和CSV文件，通过文件扩展名判断
+    const fileExtension = path.extname(file.originalname).toLowerCase();
+    if (fileExtension === '.xlsx' || fileExtension === '.csv') {
       cb(null, true);
     } else {
-      cb(new Error('只支持XLSX文件格式'));
+      cb(new Error('只支持XLSX和CSV文件格式'));
     }
   }
 });
@@ -42,7 +42,7 @@ router.get('/', JobController.getJobs); // 获取职位列表（支持搜索和�
 router.get('/:id', JobController.getJobById); // 获取职位详情
 
 // 需要认证的接口
-router.post('/upload', authenticateToken, authorizeAdmin, upload.single('file'), JobController.uploadExcel); // 上传XLSX文件
+router.post('/upload', authenticateToken, authorizeAdmin, upload.single('file'), JobController.uploadFile); // 上传文件
 
 // 管理员接口
 router.delete('/:id', authenticateToken, authorizeAdmin, JobController.deleteJob); // 删除职位
