@@ -24,7 +24,10 @@ const JobListItem = ({ job, onClick, isSelected }) => {
     >
       <div className="job-title">{job.title}</div>
       <div className="job-company">{job.company_name}</div>
-      <div className="job-location">{job.location}</div>
+      <div className="job-meta">
+        {job.is_remote && <span className="remote-badge">Remote</span>}
+        <span className="job-location">{job.location}</span>
+      </div>
       <div className="job-salary">{job.salary_range || '面议'}</div>
       <div className="job-posted">{formatRelativeTime(job.created_at)}</div>
     </div>

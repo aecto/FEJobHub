@@ -46,15 +46,13 @@ const JobDetail = ({ job }) => {
       <div className="job-content">
         {job.description && (
           <div className="job-section">
-            <h3>职位描述</h3>
-            <div className="job-description" dangerouslySetInnerHTML={{ __html: job.description.replace(/\n/g, '<br>') }} />
+            <div className="job-description" dangerouslySetInnerHTML={{ __html: job.description }} />
           </div>
         )}
         
         {job.requirements && (
           <div className="job-section">
-            <h3>职位要求</h3>
-            <div className="job-requirements" dangerouslySetInnerHTML={{ __html: job.requirements.replace(/\n/g, '<br>') }} />
+            <div className="job-requirements" dangerouslySetInnerHTML={{ __html: job.requirements }} />
           </div>
         )}
       </div>

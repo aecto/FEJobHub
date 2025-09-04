@@ -39,6 +39,11 @@ const Job = sequelize.define('Job', {
     type: DataTypes.STRING(500),
     allowNull: false
   },
+  is_remote: {
+    type: DataTypes.BOOLEAN,
+    allowNull: false,
+    defaultValue: false
+  },
   created_at: {
     type: DataTypes.DATE,
     allowNull: false,
