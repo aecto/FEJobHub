@@ -102,17 +102,24 @@ class ExcelParser {
         if (skillMatches) {
           skills = skillMatches.join(', ');
         }
+      } else if (item.description) {
+        // 如果没有专门的requirements字段，从description中提取
+        const skillMatches = item.description.match(/(Python|Java|JavaScript|React|Vue|Angular|Node\.js|SQL|MongoDB|AWS|Docker|Kubernetes)/gi);
+        if (skillMatches) {
+          skills = skillMatches.join(', ');
+        }
       }
       
+      // 注意：这里使用正确的字段名称，不需要大小写转换
       return {
-        title: item.title || item.Title || "",
-        company_name: item.company_name || item.Company || "",
-        location: item.location || item.Location || "",
+        title: item.title || "",  // Excel中的字段就是title
+        company_name: item.company_name || "",  // Excel中的字段就是company_name
+        location: item.location || "",  // Excel中的字段就是location
         salary_range: salaryRange,
         skills: skills,
-        description: item.description || item.Description || "",
-        requirements: item.requirements || item.Requirements || "",
-        job_apply_url: item.job_apply_url || item.ApplyURL || "",
+        description: item.description || "",
+        requirements: item.requirements || item.description || "",  // 如果没有requirements，使用description
+        job_apply_url: item.job_apply_url || "",  // Excel中的字段就是job_apply_url
         created_at: currentDate,
         expires_at: expiryDate,
         status: 'active'
