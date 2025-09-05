@@ -11,7 +11,7 @@ const HomePage = () => {
         <div className="hero-content">
           <h1>FEJobHub</h1>
           <h2>外职汇</h2>
-          <p>发现并申请全球领先企业的职位机会</p>
+          <p>发现外资企业的职位信息</p>
           <div className="hero-buttons">
             <button className="primary-button" onClick={() => navigate('/jobs')}>
               浏览职位
@@ -26,15 +26,15 @@ const HomePage = () => {
       <div className="features-section">
         <div className="feature">
           <h3>海量职位</h3>
-          <p>汇集全球企业的招聘信息</p>
+          <p>专注外企招聘信息</p>
         </div>
         <div className="feature">
           <h3>精准搜索</h3>
-          <p>支持多维度精准搜索职位</p>
+          <p>支持多维精准搜索</p>
         </div>
         <div className="feature">
-          <h3>一键申请</h3>
-          <p>直达官方申请页真实信息</p>
+          <h3>真实信息</h3>
+          <p>直达官网申请页面</p>
         </div>
       </div>
     </div>
