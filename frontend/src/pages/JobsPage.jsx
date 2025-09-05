@@ -1,32 +1,16 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import JobList from '../components/job/JobList'
-import JobDetail from '../components/job/JobDetail'
-import { jobAPI, authAPI } from '../services/api'
+import { authAPI } from '../services/api'
 import '../components/job/JobStyles.css'
 
 const JobsPage = () => {
   const navigate = useNavigate()
-  const [selectedJob, setSelectedJob] = useState(null)
   const [currentUser, setCurrentUser] = useState(null)
   const [showDropdown, setShowDropdown] = useState(false)
 
-  // 页面加载时默认选择第一个职位
-  useEffect(() => {
-    const fetchFirstJob = async () => {
-      try {
-        const response = await jobAPI.getJobs({ page: 1, limit: 1 })
-        if (response.data.jobs && response.data.jobs.length > 0) {
-          setSelectedJob(response.data.jobs[0])
-        }
-      } catch (error) {
-        console.error('获取第一个职位失败:', error)
-      }
-    }
-
-    fetchFirstJob()
-    
-    // 检查用户登录状态
+  // 检查用户登录状态
+  React.useEffect(() => {
     checkUserStatus()
   }, [])
 
@@ -84,11 +68,8 @@ const JobsPage = () => {
       </header>
       
       <div className="jobs-container">
-        <div className="jobs-sidebar">
-          <JobList onJobSelect={setSelectedJob} selectedJob={selectedJob} />
-        </div>
-        <div className="jobs-main">
-          <JobDetail job={selectedJob} />
+        <div className="jobs-main-full">
+          <JobList />
         </div>
       </div>
       

@@ -38,7 +38,7 @@ const JobSearch = ({ onSearch }) => {
 
   return (
     <div className="job-search">
-      <form onSubmit={handleSubmit}>
+      <form onSubmit={handleSubmit} className="search-form">
         <div className="search-fields">
           <input
             type="text"
@@ -72,10 +72,10 @@ const JobSearch = ({ onSearch }) => {
             onChange={handleChange}
             onClick={(e) => e.stopPropagation()} // 防止事件冒泡
           />
-        </div>
-        <div className="search-buttons">
-          <button type="submit">搜索</button>
-          <button type="button" onClick={handleReset}>重置</button>
+          <div className="search-buttons">
+            <button type="submit">搜索</button>
+            <button type="button" onClick={handleReset}>重置</button>
+          </div>
         </div>
       </form>
     </div>

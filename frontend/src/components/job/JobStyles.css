@@ -126,17 +126,8 @@
   z-index: 1;
 }
 
-.jobs-sidebar {
-  width: 40%;
-  border-right: 1px solid #e0e0e0;
-  overflow-y: auto;
-  padding: 20px;
-  position: relative;
-  z-index: 5;
-}
-
-.jobs-main {
-  width: 60%;
+.jobs-main-full {
+  width: 100%;
   overflow-y: auto;
   padding: 20px;
   position: relative;
@@ -164,11 +155,50 @@
   margin: 0;
 }
 
+/* 职位详情页面样式 */
+.job-detail-page {
+  width: 100%;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.job-detail-container {
+  flex: 1;
+  overflow-y: auto;
+  padding: 20px;
+  max-width: 1200px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+.back-button-container {
+  margin-bottom: 20px;
+}
+
+.back-button {
+  background-color: #007bff;
+  color: white;
+  border: none;
+  padding: 10px 15px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.back-button:hover {
+  background-color: #0056b3;
+}
+
 /* 职位搜索样式 */
 .job-search {
   margin-bottom: 20px;
   position: relative;
   z-index: 15; /* 确保搜索框在上层 */
+}
+
+.search-form {
+  width: 100%;
 }
 
 .search-fields {
@@ -178,6 +208,7 @@
   margin-bottom: 10px;
   position: relative;
   z-index: 15;
+  align-items: center;
 }
 
 .search-fields input {
@@ -195,11 +226,11 @@
   gap: 10px;
   position: relative;
   z-index: 15;
+  flex-wrap: nowrap;
 }
 
 .search-buttons button {
-  flex: 1;
-  padding: 10px;
+  padding: 10px 15px;
   background-color: #007bff;
   color: white;
   border: none;
@@ -207,6 +238,7 @@
   cursor: pointer;
   position: relative;
   z-index: 15;
+  white-space: nowrap;
 }
 
 .search-buttons button:hover {
@@ -475,7 +507,8 @@
   }
   
   .jobs-sidebar,
-  .jobs-main {
+  .jobs-main,
+  .jobs-main-full {
     width: 100%;
   }
   
@@ -490,5 +523,13 @@
   
   .search-fields input {
     min-width: auto;
+  }
+  
+  .search-buttons {
+    width: 100%;
+  }
+  
+  .search-buttons button {
+    flex: 1;
   }
 }

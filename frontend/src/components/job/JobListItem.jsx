@@ -1,6 +1,6 @@
 import React from 'react'
 
-const JobListItem = ({ job, onClick, isSelected }) => {
+const JobListItem = ({ job, onClick }) => {
   // 格式化相对时间
   const formatRelativeTime = (dateString) => {
     const date = new Date(dateString)
@@ -19,7 +19,7 @@ const JobListItem = ({ job, onClick, isSelected }) => {
 
   return (
     <div 
-      className={`job-list-item ${isSelected ? 'selected' : ''}`} 
+      className="job-list-item" 
       onClick={() => onClick(job)}
     >
       <div className="job-title">{job.title}</div>

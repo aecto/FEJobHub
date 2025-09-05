@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { jobAPI } from '../../services/api'
 import JobListItem from './JobListItem'
 import JobSearch from './JobSearch'
 import JobPagination from './JobPagination'
 
-const JobList = ({ onJobSelect, selectedJob }) => {
+const JobList = () => {
+  const navigate = useNavigate()
   const [jobs, setJobs] = useState([])
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState(null)
@@ -31,11 +33,6 @@ const JobList = ({ onJobSelect, selectedJob }) => {
       const response = await jobAPI.getJobs(searchParams)
       setJobs(response.data.jobs)
       setPagination(response.data.pagination)
-      
-      // 如果没有选中的职位且有职位数据，则默认选择第一个
-      if (!selectedJob && response.data.jobs.length > 0) {
-        onJobSelect(response.data.jobs[0])
-      }
     } catch (err) {
       setError('获取职位列表失败')
       console.error(err)
@@ -61,6 +58,11 @@ const JobList = ({ onJobSelect, selectedJob }) => {
     })
   }
 
+  // 处理职位选择（跳转到详情页）
+  const handleJobSelect = (job) => {
+    navigate(`/jobs/${job.id}`)
+  }
+
   // 监听搜索参数变化
   useEffect(() => {
     fetchJobs()
@@ -83,8 +85,7 @@ const JobList = ({ onJobSelect, selectedJob }) => {
                 <JobListItem 
                   key={job.id} 
                   job={job} 
-                  isSelected={selectedJob && selectedJob.id === job.id} // 传递选中状态
-                  onClick={() => onJobSelect(job)} 
+                  onClick={() => handleJobSelect(job)} 
                 />
               ))}
             </div>
