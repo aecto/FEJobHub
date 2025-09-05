@@ -1,11 +1,12 @@
 import React, { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useLocation } from 'react-router-dom'
 import JobList from '../components/job/JobList'
 import { authAPI } from '../services/api'
 import '../components/job/JobStyles.css'
 
 const JobsPage = () => {
   const navigate = useNavigate()
+  const location = useLocation()
   const [currentUser, setCurrentUser] = useState(null)
   const [showDropdown, setShowDropdown] = useState(false)
 
@@ -37,6 +38,15 @@ const JobsPage = () => {
     }
   }
 
+  // 获取当前激活的导航项
+  const getActiveNav = () => {
+    if (location.pathname === '/forum') return 'forum'
+    if (location.pathname === '/interview') return 'interview'
+    return 'jobs' // 默认为jobs
+  }
+
+  const activeNav = getActiveNav()
+
   return (
     <div className="jobs-page">
       {/* 页眉 */}
@@ -65,6 +75,28 @@ const JobsPage = () => {
             )}
           </div>
         </div>
+        
+        {/* 导航栏 */}
+        <nav className="jobs-navigation">
+          <div 
+            className={`nav-item ${activeNav === 'jobs' ? 'active' : ''}`}
+            onClick={() => navigate('/jobs')}
+          >
+            官网信息
+          </div>
+          <div 
+            className={`nav-item ${activeNav === 'forum' ? 'active' : ''}`}
+            onClick={() => navigate('/forum')}
+          >
+            社招论坛
+          </div>
+          <div 
+            className={`nav-item ${activeNav === 'interview' ? 'active' : ''}`}
+            onClick={() => navigate('/interview')}
+          >
+            面试交流
+          </div>
+        </nav>
       </header>
       
       <div className="jobs-container">

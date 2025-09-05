@@ -107,3 +107,29 @@
     padding: 2rem 1rem;
   }
 }
+
+/* 正在开发中样式 */
+.coming-soon {
+  text-align: center;
+  padding: 2rem;
+  background-color: #f8f9fa;
+  border-radius: 8px;
+  margin: 2rem 0;
+}
+
+.construction-icon {
+  font-size: 3rem;
+  margin-bottom: 1rem;
+}
+
+.coming-soon-text {
+  font-size: 1.5rem;
+  color: #333;
+  margin: 0.5rem 0;
+}
+
+.coming-soon-subtext {
+  font-size: 1rem;
+  color: #666;
+  margin: 0.5rem 0;
+}
