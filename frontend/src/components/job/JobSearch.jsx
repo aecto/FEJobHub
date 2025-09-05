@@ -46,6 +46,7 @@ const JobSearch = ({ onSearch }) => {
             placeholder="公司名称"
             value={searchTerms.company}
             onChange={handleChange}
+            onClick={(e) => e.stopPropagation()} // 防止事件冒泡
           />
           <input
             type="text"
@@ -53,6 +54,7 @@ const JobSearch = ({ onSearch }) => {
             placeholder="职位标题"
             value={searchTerms.title}
             onChange={handleChange}
+            onClick={(e) => e.stopPropagation()} // 防止事件冒泡
           />
           <input
             type="text"
@@ -60,6 +62,7 @@ const JobSearch = ({ onSearch }) => {
             placeholder="技能关键词"
             value={searchTerms.skills}
             onChange={handleChange}
+            onClick={(e) => e.stopPropagation()} // 防止事件冒泡
           />
           <input
             type="text"
@@ -67,6 +70,7 @@ const JobSearch = ({ onSearch }) => {
             placeholder="工作地点"
             value={searchTerms.location}
             onChange={handleChange}
+            onClick={(e) => e.stopPropagation()} // 防止事件冒泡
           />
         </div>
         <div className="search-buttons">

@@ -9,7 +9,7 @@ dotenv.config();
 
 // 创建Express应用
 const app = express();
-const PORT = process.env.PORT || 3001;  // 修改默认端口为3001
+const PORT = process.env.PORT || 3003;  // 修改默认端口为3003
 
 // 确保datasource目录存在
 const fs = require('fs');
@@ -41,14 +41,15 @@ app.use('/api/auth', require('./routes/auth'));
 app.use('/api/jobs', require('./routes/jobs'));
 app.use('/api/admin', require('./routes/admin'));
 
-// 数据库连接和同步
+// 数据库连接测试
 sequelize.authenticate()
   .then(() => {
     console.log('数据库连接成功');
-    return sequelize.sync({ alter: true });
+    // 不再自动同步表结构，避免出现ER_TOO_MANY_KEYS错误
+    // return sequelize.sync({ alter: true });
   })
   .then(() => {
-    console.log('数据库表同步完成');
+    console.log('数据库初始化完成');
   })
   .catch(err => {
     console.error('数据库连接失败:', err);
