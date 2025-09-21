@@ -1,3 +1,6 @@
-./backend/node_modules
-./frontend/node_modules
-.qoder/rules
+# 忽略 VS Code 配置
+.vscode/
+
+# 忽略 Node.js 依赖
+node_modules/
+.qoder
