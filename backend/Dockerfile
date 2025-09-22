@@ -1,10 +1,10 @@
-FROM node:16-alpine
+FROM docker.io/library/node:16-alpine
 
 WORKDIR /app
 
 # 复制package文件并安装依赖
 COPY package*.json ./
-RUN npm ci --only=production
+RUN npm config set registry https://registry.npmmirror.com && npm ci --only=production
 
 # 复制应用代码
 COPY . .
