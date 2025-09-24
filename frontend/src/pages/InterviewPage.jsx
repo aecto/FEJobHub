@@ -33,7 +33,7 @@ const InterviewPage = () => {
       
       <footer className="auth-footer">
         <div className="footer-content">
-          <p>&copy; 2025 FEJobHub. All rights reserved. 备案号：京ICP备XXXXXXXX号</p>
+          <p>&copy; 2025 FEJobHub. All rights reserved. 备案号：辽ICP备2025064354号</p>
         </div>
       </footer>
     </div>
