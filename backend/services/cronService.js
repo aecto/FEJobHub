@@ -83,7 +83,9 @@ class CronService {
         let location = item.location || "";
         const locationMatch = location.match(/C(\d+)/i);
         if (locationMatch) {
-          const locationKey = `c${locationMatch[1].toLowerCase()}`;
+          // console.log(`match location: ${locationMatch[1]}`);
+          const locationKey = `C${locationMatch[1]}`;
+          // console.log(`locationData: ${locationData[locationKey]}`);
           if (locationData[locationKey]) {
             location = locationData[locationKey];
           }
@@ -94,6 +96,11 @@ class CronService {
         const utmIndex = jobApplyUrl.indexOf('utm_source=indeed');
         if (utmIndex !== -1) {
           jobApplyUrl = jobApplyUrl.substring(0, utmIndex - 1); // -1是为了去掉前面的&
+        }
+        
+        // 截断过长的URL（限制在1000字符以内）
+        if (jobApplyUrl.length > 1000) {
+          jobApplyUrl = jobApplyUrl.substring(0, 1000);
         }
         
         // 处理薪水范围，固定为"面议"

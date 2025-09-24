@@ -4,6 +4,7 @@ const User = require('../models/User');
 const Visit = require('../models/Visit');
 const Company = require('../models/Company');
 const ExcelParser = require('../services/excelParser');
+const CronService = require('../services/cronService');
 const path = require('path');
 const fs = require('fs');
 
@@ -58,7 +59,6 @@ async function importExcelData() {
     
     if (xlsxFiles.length === 0) {
       console.log('未找到xlsx文件');
-      return;
     }
     
     // 处理每个xlsx文件
@@ -82,6 +82,46 @@ async function importExcelData() {
     }
   } catch (error) {
     console.error('导入Excel数据失败:', error);
+  }
+}
+
+// 导入CSV数据
+async function importCSVData() {
+  try {
+    // 检查数据源目录
+    const datasourceDir = path.join(__dirname, '../../datasource');
+    if (!fs.existsSync(datasourceDir)) {
+      console.log('数据源目录不存在');
+      return;
+    }
+    
+    // 查找csv文件
+    const files = fs.readdirSync(datasourceDir);
+    const csvFiles = files.filter(file => path.extname(file).toLowerCase() === '.csv');
+    
+    if (csvFiles.length === 0) {
+      console.log('未找到csv文件');
+      return;
+    }
+    
+    // 处理每个csv文件
+    for (const file of csvFiles) {
+      const filePath = path.join(datasourceDir, file);
+      console.log(`正在处理文件: ${file}`);
+      
+      // 解析CSV文件
+      const rawData = await CronService.parseCSVFile(filePath);
+      console.log(`解析到 ${rawData.length} 条数据`);
+      
+      // 处理数据
+      const processedData = await CronService.processJobData(rawData);
+      
+      // 插入数据库
+      const result = await CronService.insertJobs(processedData);
+      console.log(result.message);
+    }
+  } catch (error) {
+    console.error('导入CSV数据失败:', error);
   }
 }
 
@@ -109,6 +149,9 @@ async function main() {
     
     // 导入Excel数据
     await importExcelData();
+    
+    // 导入CSV数据
+    await importCSVData();
   } catch (error) {
     console.error('操作失败:', error);
   } finally {

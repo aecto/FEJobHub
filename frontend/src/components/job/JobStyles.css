@@ -344,8 +344,8 @@
 
 /* Remote标签样式（移除边框，改为灰色） */
 .remote-badge {
-  color: #666; /* 灰色 */
-  font-size: 14px; /* 与job-company字体大小一致 */
+  color: #08e07f; /* 灰色 */
+  font-size: 16px; /* 与job-company字体大小一致 */
 }
 
 /* 逗号样式 */

@@ -28,6 +28,7 @@ class AuthController {
       
       res.status(201).json(result);
     } catch (error) {
+      console.error('注册错误:', error);
       res.status(400).json({ error: error.message });
     }
   }
@@ -51,6 +52,7 @@ class AuthController {
       
       res.json(result);
     } catch (error) {
+      console.error('登录错误:', error);
       res.status(400).json({ error: error.message });
     }
   }
@@ -62,48 +64,62 @@ class AuthController {
    */
   static async adminLogin(req, res) {
     try {
+      console.log('管理员登录请求:', req.body);
       const { username, password } = req.body;
       
       // 验证必填字段
       if (!username || !password) {
+        console.log('用户名或密码为空');
         return res.status(400).json({ error: '用户名和密码为必填项' });
       }
       
       // 从数据库查找用户
+      console.log('正在查找用户:', username);
       const user = await User.findOne({ 
         where: { username: username },
         attributes: { exclude: ['password_hash'] }
       });
       
+      console.log('找到用户:', user);
+      
       // 检查用户是否存在
       if (!user) {
+        console.log('用户不存在');
         return res.status(401).json({ error: '用户名或密码错误' });
       }
       
       // 检查用户是否为管理员
       if (user.role !== 'admin') {
+        console.log('用户不是管理员，角色为:', user.role);
         return res.status(403).json({ error: '需要管理员权限' });
       }
       
       // 验证密码
+      console.log('正在验证密码');
       // 注意：这里需要获取包含密码哈希的完整用户信息
       const fullUser = await User.findByPk(user.id);
+      console.log('完整用户信息:', fullUser);
       const isPasswordValid = await bcrypt.compare(password, fullUser.password_hash);
+      console.log('密码验证结果:', isPasswordValid);
       
       if (!isPasswordValid) {
+        console.log('密码无效');
         return res.status(401).json({ error: '用户名或密码错误' });
       }
       
       // 更新最后登录时间
+      console.log('更新最后登录时间');
       await user.update({ last_login: new Date() });
       
       // 生成JWT token
+      console.log('生成JWT token');
       const token = jwt.sign(
         { id: user.id, username: user.username, role: user.role },
         process.env.JWT_SECRET,
         { expiresIn: process.env.JWT_EXPIRES_IN }
       );
       
+      console.log('登录成功');
       res.json({
         success: true,
         token,
@@ -115,7 +131,8 @@ class AuthController {
         }
       });
     } catch (error) {
-      res.status(500).json({ error: '管理员登录失败' });
+      console.error('管理员登录错误:', error);
+      res.status(500).json({ error: '管理员登录失败: ' + error.message });
     }
   }
   
@@ -137,6 +154,7 @@ class AuthController {
       
       res.json({ user });
     } catch (error) {
+      console.error('获取用户信息错误:', error);
       res.status(500).json({ error: '获取用户信息失败' });
     }
   }
