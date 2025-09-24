@@ -1,7 +1,7 @@
 const bcrypt = require('bcryptjs');
 
 // 生成密码哈希
-const password = 'admin123';
+const password = 'your admin account password';
 const saltRounds = 10;
 
 bcrypt.hash(password, saltRounds, function(err, hash) {
@@ -10,7 +10,7 @@ bcrypt.hash(password, saltRounds, function(err, hash) {
     return;
   }
   
-  console.log('Password hash for "admin123":');
+  console.log('Password hash for "your admin account password":');
   console.log(hash);
   
   // 输出INSERT语句
